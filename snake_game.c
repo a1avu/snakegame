@@ -10,7 +10,8 @@
 #define MAP_Y 2
 
 
-void gotoxy(int x, int y, char* box){
+//gotoxy함수 만들고 포인터 이용해서 원하는 텍스트 찍을 수 있게 했음
+void gotoxy(int x, int y, char* box){       
     COORD Pos;
     Pos.X = 2*x;
     Pos.Y = y;
@@ -26,6 +27,7 @@ int main(void){
     return 0;
 }
 
+// interface 일단 만들기만 했습니당
 void inter_face(void){
     int i, j;
 
@@ -42,5 +44,5 @@ void inter_face(void){
     gotoxy(14, 9, "★ 게임 시작 ★");
     gotoxy(12, 11, "방향키로 조작 합니다.");
     gotoxy(8, 13, "아무키나 입력하면 게임이 시작됩니다.");
-    gotoxy(MAP_WIDTH, MAP_WIDTH, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
+    gotoxy(MAP_WIDTH, MAP_WIDTH, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
 }
