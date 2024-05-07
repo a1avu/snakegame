@@ -4,13 +4,43 @@
 #include<windows.h> // gotoxy
 #include<conio.h> // 콘솔 입출력 getch()
 
-int main(void){
+#define MAP_WIDTH 30
+#define MAP_HEIGHT 20
+#define MAP_X 3
+#define MAP_Y 2
 
-    printf("------------------------------\n");
-    printf("|       게임을 시작하지       |\n");
-    printf("------------------------------\n");
-    printf("집에가고 싶다");
-    printf("공부 그만 하고 싶다.");
+
+void gotoxy(int x, int y, char* box){
+    COORD Pos;
+    Pos.X = 2*x;
+    Pos.Y = y;
+    SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), Pos);
+    printf("%s", box);
+}
+
+void inter_face(void);
+
+int main(void){
+    inter_face();
 
     return 0;
+}
+
+void inter_face(void){
+    int i, j;
+
+    for(i = MAP_X; i<=MAP_WIDTH; i++){
+        gotoxy(i, MAP_Y, "■");
+    }
+    for(j= MAP_Y + 1; j<=MAP_HEIGHT; j++){
+        gotoxy(MAP_X, j, "■");
+        gotoxy(MAP_X + MAP_WIDTH - 3, j, "■");
+    }
+    for(i = MAP_X; i<=MAP_WIDTH; i++){
+        gotoxy(i, MAP_Y + MAP_HEIGHT - 1, "■");
+    }
+    gotoxy(14, 9, "★ 게임 시작 ★");
+    gotoxy(12, 11, "방향키로 조작 합니다.");
+    gotoxy(8, 13, "아무키나 입력하면 게임이 시작됩니다.");
+    gotoxy(MAP_WIDTH, MAP_WIDTH, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
 }
