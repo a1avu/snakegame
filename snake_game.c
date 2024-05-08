@@ -20,9 +20,11 @@ void gotoxy(int x, int y, char* s){
 }
 
 void inter_face(void);
+void map(void);
 
 int main(void){
     inter_face();
+    map();
 
     return 0;
 }
@@ -48,4 +50,21 @@ void inter_face(void){
     scanf("%s",nickname);
     gotoxy(15, 16, nickname);
     gotoxy(MAP_WIDTH, MAP_WIDTH, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
+}
+void map(void){
+    system("cls");
+    int i, j;
+    char nickname[3][10];
+    for(i = MAP_X; i<=MAP_WIDTH; i++){
+        gotoxy(i, MAP_Y, "■");
+    }
+    for(j= MAP_Y + 1; j<=MAP_HEIGHT; j++){
+        gotoxy(MAP_X, j, "■");
+        gotoxy(MAP_X + MAP_WIDTH - 3, j, "■");
+    }
+    for(i = MAP_X; i<=MAP_WIDTH; i++){
+        gotoxy(i, MAP_Y + MAP_HEIGHT - 1, "■");
+    }
+    gotoxy(20, 15, "nickname: ");
+    printf("%s", nickname);
 }
