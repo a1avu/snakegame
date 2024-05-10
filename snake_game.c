@@ -65,6 +65,7 @@ void map(void){
     for(i = MAP_X; i<=MAP_WIDTH; i++){
         gotoxy(i, MAP_Y + MAP_HEIGHT - 1, "■");
     }
-    gotoxy(20, 15, "nickname: ");
+    gotoxy(40, 15, "nickname: ");
     printf("%s", nickname);
+    gotoxy(MAP_WIDTH, MAP_WIDTH, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
 }
