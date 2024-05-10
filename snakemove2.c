@@ -94,6 +94,7 @@ void inter_face(char *nickname){
     system("cls");
 }
 void map(void){
+    system("cls");
     int i, j;
     char nickname[3][10];
     for(i = MAP_X; i<=MAP_WIDTH; i++){
@@ -106,8 +107,9 @@ void map(void){
     for(i = MAP_X; i<=MAP_WIDTH; i++){
         gotoxy(i, MAP_Y + MAP_HEIGHT - 1, "■");
     }
-    gotoxy(20, 15, "nickname: ");
+    gotoxy(40, 15, "nickname: ");
     printf("%s", nickname);
+    gotoxy(MAP_WIDTH, MAP_WIDTH, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
 }
 void moveSnake(Snake *snake, Direction direction){
      int preX = snake -> x;
