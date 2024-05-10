@@ -3,7 +3,7 @@
 #include<time.h>    //srand()
 #include<windows.h> // gotoxy
 #include<conio.h> // 콘솔 입출력 getch()
-#include <unistd.h>
+#include <unistd.h> //Sleep() 쓰려면 추가
 
 #define MAP_WIDTH 30
 #define MAP_HEIGHT 20
@@ -163,3 +163,8 @@ void moveSnake(Snake *snake, int length, Direction direction){
     }
     Sleep(1000);
 }
+
+/* <해야하는 코드 수정>
+  1.먹이가 랜덤으로 나오게하는 것 추가
+  2.먹이를 먹으면 몸의 길이가 길어지게 하는 것 추가
+  3.머리가 벽에 부딪히면 게임이 종료되는 코드 추가 */
