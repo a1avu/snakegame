@@ -1,6 +1,6 @@
 #include<stdio.h>
 #include<stdlib.h>  //rand()
-#include<time.h>    // ??
+#include<time.h>    // rand값 초기화
 #include<windows.h> // gotoxy
 #include<conio.h> // 콘솔 입출력 getch()
 
@@ -9,6 +9,8 @@
 #define MAP_X 3
 #define MAP_Y 2
 #define Initial_Length 5
+
+int score = 0;
 
 //지렁이의 위치를 나타내는 구조체
 typedef struct{
@@ -103,7 +105,6 @@ void inter_face(char *nickname){
 void map(nickname){  //interface에서 포인터로 지정한 nickname 받아와서 사용
     system("cls");
     int i, j;
-    int score = 0;
 
     for(i = MAP_X; i<=MAP_WIDTH; i++){
         gotoxy(i, MAP_Y, "■");
@@ -173,8 +174,23 @@ void moveSnake(Snake *snake, int length, Direction direction){
         gotoxy(snake[i].x, snake[i].y, "■");
     }
     Sleep(500);
+
 }
 
-void food(void){
+void food(snakeLength){ //먹이 생성               →    미완
+    srand(time(NULL));
+
+    int food_rand = 0;
+
+    int food_x = rand()%MAP_WIDTH+(MAP_X+1);
+    int food_y = rand()%MAP_HEIGHT+(MAP_Y+1);
+    
+    //뱀 머리랑 몸 쪽에 먹이 생기지 않게 하기
+    if(food_x == snakeLength && food_y == snakeLength){
+        food_rand = 1;
+    }
+    gotoxy(food_x, food_y, "@");
+
+
     
 }

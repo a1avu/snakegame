@@ -175,7 +175,7 @@ void moveSnake(Snake *snake, int length, Direction direction){
         음식 랜덤 생성 -->>
           - width만큼의 x  height 만큼의 y좌표 값 랜덤으로 받은 후 하나의 변수에 저장하고 출력하게
           - 하나의 값에 넣고 해당 좌표에 먹이 생성 1~2개 씩 생성
-          - 머리가 음식에 닿으면 score 올라가고
+          - 머리가 음식에 닿으면 score 올라가고  (snakeMove에 넣어야 함)
           - 꼬리 하나 증가
           - 음식 지워짐(이건 그냥 지나가면 자동으로 초기화 되는것 처럼 보임)
   
