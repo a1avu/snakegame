@@ -32,12 +32,14 @@ void gotoxy(int x, int y, char* s){
     printf("%s", s);
 }
 
-void inter_face(void);
-void map(void);
+void inter_face(char *nickname);
+void map(char *nickname);
+void moveSnake(Snake *snake, int length, Direction direction);
 
 int main(void){
-    inter_face();
-    map();
+    char nickname[3][20];
+    inter_face(nickname);
+    map(nickname);
 
     
     //지렁이 초기 위치 및 몸 길이
@@ -76,7 +78,7 @@ int main(void){
 }
 
 // interface 일단 만들기만 했습니당
-void inter_face(void){
+void inter_face(char *nickname){
     system("cls");
     int i, j;
     char nickname[3][10];
@@ -96,13 +98,14 @@ void inter_face(void){
     gotoxy(12, 15,"nickname : ");
     scanf("%s",nickname);
     gotoxy(15, 16, nickname);
-    gotoxy(MAP_WIDTH, MAP_WIDTH, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
+    system("cls");
 }
 
-void map(void){
+void map(char *nickname){
     system("cls");
     int i, j;
-    char nickname[3][10];
+    int score = 0;
+
     for(i = MAP_X; i<=MAP_WIDTH; i++){
         gotoxy(i, MAP_Y, "■");
     }
@@ -115,7 +118,8 @@ void map(void){
     }
     gotoxy(40, 15, "nickname: ");
     printf("%s", nickname);
-    gotoxy(MAP_WIDTH, MAP_WIDTH, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
+    gotoxy(40, 17, "score: ");
+    printf("%d", score);
 }
 
 void moveSnake(Snake *snake, int length, Direction direction){
@@ -139,7 +143,8 @@ void moveSnake(Snake *snake, int length, Direction direction){
         default:
             break;
     }
-      // 충돌 검사
+    /*
+       // 충돌 검사
     for (int i = 1; i < length; i++) {
         if (snake[i].x == snake[0].x && snake[i].y == snake[0].y) {
             // 충돌 발생 시 게임 종료 등의 처리를 해주어야 합니다.
@@ -147,6 +152,8 @@ void moveSnake(Snake *snake, int length, Direction direction){
             exit(0);
         }
     }
+    */
+   
     // 이전 꼬리의 위치
     int preTailX = snake[length - 1].x;
     int preTailY = snake[length - 1].y;
@@ -166,5 +173,5 @@ void moveSnake(Snake *snake, int length, Direction direction){
     for (int i = 1; i <= length - 1; i++) {
         gotoxy(snake[i].x, snake[i].y, "■");
     }
-    Sleep(1000);
+    Sleep(500);
 }
