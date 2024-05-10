@@ -33,7 +33,7 @@ void gotoxy(int x, int y, char* s){
 }
 
 void inter_face(char *nickname);
-void map(char *nickname);
+void map(nickname);
 void moveSnake(Snake *snake, int length, Direction direction);
 
 int main(void){
@@ -97,11 +97,10 @@ void inter_face(char *nickname){
     gotoxy(8, 12, "아무키나 입력하면 게임이 시작됩니다.");
     gotoxy(12, 15,"nickname : ");
     scanf("%s",nickname);
-    gotoxy(15, 16, nickname);
     system("cls");
 }
 
-void map(char *nickname){
+void map(nickname){  //interface에서 포인터로 지정한 nickname 받아와서 사용
     system("cls");
     int i, j;
     int score = 0;
