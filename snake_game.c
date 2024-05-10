@@ -174,3 +174,7 @@ void moveSnake(Snake *snake, int length, Direction direction){
     }
     Sleep(500);
 }
+
+void food(void){
+    
+}
