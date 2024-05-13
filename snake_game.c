@@ -131,62 +131,67 @@ void map(char nickname[3][20]){  //interface에서 nickname 받아와서 사용
 }
 
 void moveSnake(Snake *snake, int length, Direction direction){
-    int preTailX, preTailY;
-    // 머리 위치 저장
-    int headX = snake[0].x;
-    int headY = snake[0].y;
-    if(snake[0].x == food_x && snake[0].y == food_y){  
-        //뱀이 먹이 먹었을 때 score 100점 오르고, food 다른 곳에 또 생성
+
+    if(snake[0].x == food_x && snake[0].y == food_y){  //뱀이 먹이 먹었을 때 score 100점 오르고, food 다른 곳에 또 생성
         score+=100;
         gotoxy(40, 17, "score: ");
         printf("%d", score);
         length++;
         food(snake, length);
     }
-    else {
-        // 먹이를 먹지 않았을 때
-        // 이전 꼬리의 위치
-        preTailX = snake[length - 1].x;
-        preTailY = snake[length - 1].y;
 
-        // 꼬리를 한 칸 앞으로 이동
-        for (int i = length - 1; i > 0; i--) {
-            snake[i].x = snake[i - 1].x;
-            snake[i].y = snake[i - 1].y;
-        }
-
-        // 이전 꼬리의 자취 지우기
-        gotoxy(preTailX, preTailY, " ");
-    }
-
+    // 현재 지렁이의 머리 위치
+    int preX = snake[0].x;
+    int preY = snake[0].y;
     //방향키에 따라서 머리 위치 업데이트
     switch(direction) {
         case UP:
-            headY--;
+            snake[0].y--;
             break;
         case DOWN:
-            headY++;
+            snake[0].y++;
             break;
         case LEFT:
-            headX--;
+            snake[0].x--;
             break;
         case RIGHT:
-            headX++;
+            snake[0].x++;
             break;
         default:
             break;
     }
-    // 머리의 새로운 위치 그리기
-    gotoxy(headX, headY, "■");
-    // 꼬리의 위치 업데이트
-    snake[0].x = headX;
-    snake[0].y = headY;
+    /*
+       // 충돌 검사
+    for (int i = 1; i < length; i++) {
+        if (snake[i].x == snake[0].x && snake[i].y == snake[0].y) {
+            // 충돌 발생 시 게임 종료 등의 처리를 해주어야 합니다.
+            // 여기서는 간단하게 프로그램 종료로 처리합니다.
+            exit(0);
+        }
+    }
+    */
    
+    // 이전 꼬리의 위치
+    int preTailX = snake[length - 1].x;
+    int preTailY = snake[length - 1].y;
+
+    gotoxy(preTailX, preTailY, " "); // 이전 꼬리 지우기
+
+    // 몸통 이동
+    for (int i = length - 1; i > 0; i--) {
+        snake[i].x = snake[i - 1].x;
+        snake[i].y = snake[i - 1].y;
+    }
+
+    // 새로운 머리 그리기
+    gotoxy(snake[0].x, snake[0].y ,"■");
+
     // 몸통 그리기
     for (int i = 1; i <= length - 1; i++) {
         gotoxy(snake[i].x, snake[i].y, "■");
     }
     Sleep(500);
+
 }
 
 void food(Snake *snake, int snakeLength){ //먹이 생성
@@ -211,4 +216,3 @@ void food(Snake *snake, int snakeLength){ //먹이 생성
 
     gotoxy(food_x, food_y, "@");
 }
-//수정함
