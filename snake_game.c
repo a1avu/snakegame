@@ -38,7 +38,7 @@ void gotoxy(int x, int y, char* s){
 
 void inter_face(char nickname[3][20]);
 void map(char nickname[3][20]);
-void moveSnake(Snake *snake, int length, Direction direction);
+int moveSnake(Snake *snake, int length, Direction direction);
 void food(Snake *snake, int snakeLength);
 
 
@@ -81,7 +81,9 @@ int main(void){
             }
         }
         moveSnake(snake, snakeLength, direction);
-    }
+        if(moveSnake(snake, snakeLength, direction) == 1)
+            break;
+    }  
 
     return 0;
 }
@@ -131,11 +133,19 @@ void map(char nickname[3][20]){  //interface에서 nickname 받아와서 사용
     printf("%d", score);
 }
 
-void moveSnake(Snake *snake, int length, Direction direction){
+int moveSnake(Snake *snake, int length, Direction direction){
     int preTailX, preTailY;
     // 머리 위치 저장
     int headX = snake[0].x;
     int headY = snake[0].y;
+
+    if(snake[0].x==MAP_X || snake[0].x==(MAP_WIDTH+MAP_X) || snake[0].y==MAP_Y || snake[0].y == (MAP_HEIGHT+MAP_Y)){
+        system("cls");
+        gotoxy(17, 11, "game over");
+        return 1;  //return 1 할라고 int 형식으로 함수 바꿈
+    }
+
+
     if(snake[0].x == food_x && snake[0].y == food_y){  
         //뱀이 먹이 먹었을 때 score 100점 오르고, food 다른 곳에 또 생성
         score+=100;
