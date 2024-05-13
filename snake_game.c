@@ -11,6 +11,7 @@
 #define Initial_Length 5
 
 int score = 0;
+int food_x, food_y; //음식 최초 점수
 
 //지렁이의 위치를 나타내는 구조체
 typedef struct{
@@ -34,15 +35,18 @@ void gotoxy(int x, int y, char* s){
     printf("%s", s);
 }
 
-void inter_face(char *nickname);
-void map(nickname);
+void inter_face(char nickname[3][20]);
+void map(char nickname[3][20]);
 void moveSnake(Snake *snake, int length, Direction direction);
+void food(Snake *snake, int snakeLength);
+
+
 
 int main(void){
     char nickname[3][20];
+
     inter_face(nickname);
     map(nickname);
-
     
     //지렁이 초기 위치 및 몸 길이
     Snake snake[Initial_Length];
@@ -52,7 +56,9 @@ int main(void){
     }
     int snakeLength = Initial_Length; //나중에 먹이 먹어서 몸 길어질때 사용할 변수.
     Direction direction = RIGHT; //오른쪽으로 이동하게 함.
-
+    
+    food(snake, snakeLength);  //음식 생성
+    
     while(1){
         if (_kbhit()) { // 사용자 입력 감지
             char ch = _getch();
@@ -80,42 +86,44 @@ int main(void){
 }
 
 // interface 일단 만들기만 했습니당
-void inter_face(char *nickname){
+void inter_face(char nickname[3][20]){
     system("cls");
     int i, j;
-    char nickname[3][10];
-    for(i = MAP_X; i<=MAP_WIDTH; i++){
+
+    for(i = MAP_X; i<=MAP_WIDTH+MAP_X; i++){
         gotoxy(i, MAP_Y, "■");
     }
-    for(j= MAP_Y + 1; j<=MAP_HEIGHT; j++){
+    for(j= MAP_Y + 1; j<=MAP_HEIGHT+MAP_Y; j++){
         gotoxy(MAP_X, j, "■");
-        gotoxy(MAP_X + MAP_WIDTH - 3, j, "■");
+        gotoxy(MAP_X + MAP_WIDTH, j, "■");
     }
-    for(i = MAP_X; i<=MAP_WIDTH; i++){
-        gotoxy(i, MAP_Y + MAP_HEIGHT - 1, "■");
+    for(i = MAP_X; i<=MAP_WIDTH+MAP_X; i++){
+        gotoxy(i, MAP_Y + MAP_HEIGHT, "■");
     }
+
     gotoxy(13, 9, "★ 게임 시작 ★");
     gotoxy(12, 11, "방향키로 조작 합니다.");
     gotoxy(8, 12, "아무키나 입력하면 게임이 시작됩니다.");
     gotoxy(12, 15,"nickname : ");
-    scanf("%s",nickname);
+    scanf("%s",nickname[0]);
     system("cls");
 }
 
-void map(nickname){  //interface에서 포인터로 지정한 nickname 받아와서 사용
+void map(char nickname[3][20]){  //interface에서 nickname 받아와서 사용
     system("cls");
     int i, j;
 
-    for(i = MAP_X; i<=MAP_WIDTH; i++){
+    for(i = MAP_X; i<=MAP_WIDTH+MAP_X; i++){
         gotoxy(i, MAP_Y, "■");
     }
-    for(j= MAP_Y + 1; j<=MAP_HEIGHT; j++){
+    for(j= MAP_Y + 1; j<=MAP_HEIGHT+MAP_Y; j++){
         gotoxy(MAP_X, j, "■");
-        gotoxy(MAP_X + MAP_WIDTH - 3, j, "■");
+        gotoxy(MAP_X + MAP_WIDTH, j, "■");
     }
-    for(i = MAP_X; i<=MAP_WIDTH; i++){
-        gotoxy(i, MAP_Y + MAP_HEIGHT - 1, "■");
+    for(i = MAP_X; i<=MAP_WIDTH+MAP_X; i++){
+        gotoxy(i, MAP_Y + MAP_HEIGHT, "■");
     }
+
     gotoxy(40, 15, "nickname: ");
     printf("%s", nickname);
     gotoxy(40, 17, "score: ");
@@ -123,6 +131,15 @@ void map(nickname){  //interface에서 포인터로 지정한 nickname 받아와
 }
 
 void moveSnake(Snake *snake, int length, Direction direction){
+
+    if(snake[0].x == food_x && snake[0].y == food_y){  //뱀이 먹이 먹었을 때 score 100점 오르고, food 다른 곳에 또 생성
+        score+=100;
+        gotoxy(40, 17, "score: ");
+        printf("%d", score);
+        length++;
+        food(snake, length);
+    }
+
     // 현재 지렁이의 머리 위치
     int preX = snake[0].x;
     int preY = snake[0].y;
@@ -177,20 +194,25 @@ void moveSnake(Snake *snake, int length, Direction direction){
 
 }
 
-void food(snakeLength){ //먹이 생성               →    미완
-    srand(time(NULL));
+void food(Snake *snake, int snakeLength){ //먹이 생성
+    int food_rand;  //음식이 몸이랑 겹치는지 위한 판별하기 위한 변수
 
-    int food_rand = 0;
-
-    int food_x = rand()%MAP_WIDTH+(MAP_X+1);
-    int food_y = rand()%MAP_HEIGHT+(MAP_Y+1);
-    
     //뱀 머리랑 몸 쪽에 먹이 생기지 않게 하기
-    if(food_x == snakeLength && food_y == snakeLength){
-        food_rand = 1;
-    }
+    do{
+        food_rand = 0;
+        srand(time(NULL));     //난수 지속적으로 초기화
+
+        food_x = rand()%(MAP_WIDTH-1)+(MAP_X+1);  // X좌표에 난수 값 넣기
+        food_y = rand()%(MAP_HEIGHT-1)+(MAP_Y+1); // y좌표에 난수 값 넣기
+        
+        for(int i=0; i<snakeLength; i++){
+            if(food_x == snake[i].x && food_y == snake[i].y){
+                food_rand = 1;
+                break;
+            }
+        }
+
+    }while(food_rand);     // 만약 food_rand값이 1이 되면 반복문 실행 하고 안되면 그냥 출력되게
+
     gotoxy(food_x, food_y, "@");
-
-
-    
 }
