@@ -212,3 +212,4 @@ void food(Snake *snake, int snakeLength){ //먹이 생성
 
     gotoxy(food_x, food_y, "@");
 }
+//수정함
