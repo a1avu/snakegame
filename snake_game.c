@@ -3,7 +3,6 @@
 #include<time.h>    // rand값 초기화
 #include<windows.h> // gotoxy
 #include<conio.h> // 콘솔 입출력 getch()
-#include<unistd.h>
 
 #define MAP_WIDTH 30
 #define MAP_HEIGHT 20
