@@ -1,9 +1,9 @@
-/* 140ë²ˆì§¸ ì¤„ê¹Œì§€ ìˆ˜ì •í•¨ */
+/* 140¹øÂ° ÁÙ±îÁö ¼öÁ¤ÇÔ */
 #include<stdio.h>
 #include<stdlib.h>  //rand()
-#include<time.h>    // randê°’ ì´ˆê¸°í™”
+#include<time.h>    // rand°ª ÃÊ±âÈ­
 #include<windows.h> // gotoxy
-#include<conio.h> // ì½˜ì†” ì…ì¶œë ¥ getch()
+#include<conio.h> // ÄÜ¼Ö ÀÔÃâ·Â getch()
 
 #define MAP_WIDTH 30
 #define MAP_HEIGHT 20
@@ -12,14 +12,14 @@
 #define Initial_Length 5
 
 int score = 0;
-int food_x, food_y; //ìŒì‹ ìµœì´ˆ ì ìˆ˜
+int food_x, food_y; //À½½Ä ÃÖÃÊ Á¡¼ö
 
-//ì§€ë ì´ì˜ ìœ„ì¹˜ë¥¼ ë‚˜íƒ€ë‚´ëŠ” êµ¬ì¡°ì²´
+//Áö··ÀÌÀÇ À§Ä¡¸¦ ³ªÅ¸³»´Â ±¸Á¶Ã¼
 typedef struct{
     int x;
     int y;
     }Snake;
-// ì§€ë ì´ì˜ ì´ë™ë°©í–¥ì„ ë‚˜íƒ€ë‚´ëŠ” ì—´ê±°í˜•
+// Áö··ÀÌÀÇ ÀÌµ¿¹æÇâÀ» ³ªÅ¸³»´Â ¿­°ÅÇü
 typedef enum{
     UP,
     DOWN,
@@ -27,7 +27,7 @@ typedef enum{
     RIGHT
 } Direction;
 
-//gotoxyí•¨ìˆ˜ ë§Œë“¤ê³  í¬ì¸í„° ì´ìš©í•´ì„œ ì›í•˜ëŠ” í…ìŠ¤íŠ¸ ì°ì„ ìˆ˜ ìˆê²Œ í–ˆìŒ
+//gotoxyÇÔ¼ö ¸¸µé°í Æ÷ÀÎÅÍ ÀÌ¿ëÇØ¼­ ¿øÇÏ´Â ÅØ½ºÆ® ÂïÀ» ¼ö ÀÖ°Ô ÇßÀ½
 void gotoxy(int x, int y, char* s){       
     COORD Pos;
     Pos.X = 2*x;
@@ -45,26 +45,28 @@ void reset(Snake *snake, int snakeLength);
 
 int main(void){
     char nickname[3][20];
+    Snake snake[100]; // ÃÖ´ë±æÀÌ¸¦ 100À¸·Î ¼±¾ğ
+    Direction direction = RIGHT; // ¹æÇâ º¯¼ö¸¦ ÃÊ±âÈ­
 
     inter_face(nickname);
     map(nickname);
-    int snakeLength = Initial_Length; //ë‚˜ì¤‘ì— ë¨¹ì´ ë¨¹ì–´ì„œ ëª¸ ê¸¸ì–´ì§ˆë•Œ ì‚¬ìš©í•  ë³€ìˆ˜.
+    int snakeLength = Initial_Length; //³ªÁß¿¡ ¸ÔÀÌ ¸Ô¾î¼­ ¸ö ±æ¾îÁú¶§ »ç¿ëÇÒ º¯¼ö.
     reset(snake,snakeLength);
 
     while(1){
-        if (_kbhit()) { // ì‚¬ìš©ì ì…ë ¥ ê°ì§€
+        if (_kbhit()) { // »ç¿ëÀÚ ÀÔ·Â °¨Áö
             char ch = _getch();
             switch(ch) {
-                case 72: // ë°©í–¥í‚¤ ìœ„ìª½
-                    direction = UP;
+                case 72: // ¹æÇâÅ° À§ÂÊ
+                   direction = UP;
                     break;
-                case 80: // ë°©í–¥í‚¤ ì•„ë˜ìª½
+                case 80: // ¹æÇâÅ° ¾Æ·¡ÂÊ
                     direction = DOWN;
                     break;
-                case 75: // ë°©í–¥í‚¤ ì™¼ìª½
+                case 75: // ¹æÇâÅ° ¿ŞÂÊ
                     direction = LEFT;
                     break;
-                case 77: // ë°©í–¥í‚¤ ì˜¤ë¥¸ìª½
+                case 77: // ¹æÇâÅ° ¿À¸¥ÂÊ
                     direction = RIGHT;
                     break;
                 default:
@@ -79,43 +81,40 @@ int main(void){
     return 0;
 }
 
-// interface ì¼ë‹¨ ë§Œë“¤ê¸°ë§Œ í–ˆìŠµë‹ˆë‹¹
 void inter_face(char nickname[3][20]){
-    system("cls");
     int i, j;
 
     for(i = MAP_X; i<=MAP_WIDTH+MAP_X; i++){
-        gotoxy(i, MAP_Y, "â– ");
+        gotoxy(i, MAP_Y, "¡á");
     }
     for(j= MAP_Y + 1; j<=MAP_HEIGHT+MAP_Y; j++){
-        gotoxy(MAP_X, j, "â– ");
-        gotoxy(MAP_X + MAP_WIDTH, j, "â– ");
+        gotoxy(MAP_X, j, "¡á");
+        gotoxy(MAP_X + MAP_WIDTH, j, "¡á");
     }
     for(i = MAP_X; i<=MAP_WIDTH+MAP_X; i++){
-        gotoxy(i, MAP_Y + MAP_HEIGHT, "â– ");
+        gotoxy(i, MAP_Y + MAP_HEIGHT, "¡á");
     }
 
-    gotoxy(13, 9, "â˜… ê²Œì„ ì‹œì‘ â˜…");
-    gotoxy(12, 11, "ë°©í–¥í‚¤ë¡œ ì¡°ì‘ í•©ë‹ˆë‹¤.");
-    gotoxy(8, 12, "ì•„ë¬´í‚¤ë‚˜ ì…ë ¥í•˜ë©´ ê²Œì„ì´ ì‹œì‘ë©ë‹ˆë‹¤.");
+    gotoxy(13, 9, "¡Ú °ÔÀÓ ½ÃÀÛ ¡Ú");
+    gotoxy(12, 11, "¹æÇâÅ°·Î Á¶ÀÛ ÇÕ´Ï´Ù.");
+    gotoxy(8, 12, "¾Æ¹«Å°³ª ÀÔ·ÂÇÏ¸é °ÔÀÓÀÌ ½ÃÀÛµË´Ï´Ù.");
     gotoxy(12, 15,"nickname : ");
     scanf("%s",nickname[0]);
     system("cls");
 }
 
-void map(char nickname[3][20]){  //interfaceì—ì„œ nickname ë°›ì•„ì™€ì„œ ì‚¬ìš©
-    system("cls");
+void map(char nickname[3][20]){  //interface¿¡¼­ nickname ¹Ş¾Æ¿Í¼­ »ç¿ë
     int i, j;
 
     for(i = MAP_X; i<=MAP_WIDTH+MAP_X; i++){
-        gotoxy(i, MAP_Y, "â– ");
+        gotoxy(i, MAP_Y, "¡á");
     }
     for(j= MAP_Y + 1; j<=MAP_HEIGHT+MAP_Y; j++){
-        gotoxy(MAP_X, j, "â– ");
-        gotoxy(MAP_X + MAP_WIDTH, j, "â– ");
+        gotoxy(MAP_X, j, "¡á");
+        gotoxy(MAP_X + MAP_WIDTH, j, "¡á");
     }
     for(i = MAP_X; i<=MAP_WIDTH+MAP_X; i++){
-        gotoxy(i, MAP_Y + MAP_HEIGHT, "â– ");
+        gotoxy(i, MAP_Y + MAP_HEIGHT, "¡á");
     }
 
     gotoxy(40, 15, "nickname: ");
@@ -124,36 +123,33 @@ void map(char nickname[3][20]){  //interfaceì—ì„œ nickname ë°›ì•„ì™€ì„œ ì‚¬ìš©
     printf("%d", score);
 }
 void reset(Snake *snake, int snakeLength){
-    //ì§€ë ì´ ì´ˆê¸° ìœ„ì¹˜ ë° ëª¸ ê¸¸ì´
-    Snake snake[Initial_Length];
+                    
     for (int i = 0; i < Initial_Length; i++) {
-        snake[i].x = MAP_WIDTH/2 - i; //ì´ˆê¸°ì— ë¨¸ë¦¬ê°€ ê°€ì¥ ì˜¤ë¥¸ìª½ì— ìœ„ì¹˜ ëª¸í†µì´ ì™¼ìª½ìœ¼ë¡œ ì´ì–´ì§€ë„ë¡ í•˜ê¸° ìœ„í•¨. iê°€ ì¦ê°€í•¨ì— ë”°ë¼ ëª¸í†µì˜ ì¢Œí‘œê°€ ì™¼ìª½ìœ¼ë¡œ í•˜ë‚˜ì”© ì´ë™
+        snake[i].x = MAP_WIDTH/2 - i; //ÃÊ±â¿¡ ¸Ó¸®°¡ °¡Àå ¿À¸¥ÂÊ¿¡ À§Ä¡ ¸öÅëÀÌ ¿ŞÂÊÀ¸·Î ÀÌ¾îÁöµµ·Ï ÇÏ±â À§ÇÔ. i°¡ Áõ°¡ÇÔ¿¡ µû¶ó ¸öÅëÀÇ ÁÂÇ¥°¡ ¿ŞÂÊÀ¸·Î ÇÏ³ª¾¿ ÀÌµ¿
         snake[i].y = MAP_HEIGHT/2;
-	gotoxy(snake[i].x,snake.[i].y,"o");
+	gotoxy(snake[i].x, snake[i].y,"¤·");
     }
-    gotoxy(snake[0].x,snake[o].y,"ã…"); 
-    //ì¼ë‹¨ ë¨¸ë¦¬ëŠ” ã…ìœ¼ë¡œ ëª¸í†µì€ o(ì˜ì–´)ë¡œ ë°”ê¿”ë‘ .
-    Direction direction = RIGHT; //ì˜¤ë¥¸ìª½ìœ¼ë¡œ ì´ë™í•˜ê²Œ í•¨.
+    gotoxy(snake[0].x,snake[0].y,"¤¾"); 
+    //ÀÏ´Ü ¸Ó¸®´Â ¤¾À¸·Î ¸öÅëÀº ¤·(ÇÑ±Û)·Î ¹Ù²ãµÒ.
+    Direction direction = RIGHT; //¿À¸¥ÂÊÀ¸·Î ÀÌµ¿ÇÏ°Ô ÇÔ.
     
-    food(snake, snakeLength);  //ìŒì‹ ìƒì„±
+    food(snake, snakeLength);  //À½½Ä »ı¼º
 }
-// ì¼ë‹¨ ë‚˜ëŠ” 140ë²ˆì¨° ì¤„ê¹Œì§€ ë³´ê³  ìˆ˜ì •í•´ë‘ !!!!!!
+// ÀÏ´Ü ³ª´Â 140¹ø¤Š ÁÙ±îÁö º¸°í ¼öÁ¤ÇØµÒ!!!!!!
 
 int moveSnake(Snake *snake, int length, Direction direction){
     int preTailX, preTailY;
-    // ë¨¸ë¦¬ ìœ„ì¹˜ ì €ì¥
+    // ¸Ó¸® À§Ä¡ ÀúÀå
     int headX = snake[0].x;
     int headY = snake[0].y;
 
     if(snake[0].x==MAP_X || snake[0].x==(MAP_WIDTH+MAP_X) || snake[0].y==MAP_Y || snake[0].y == (MAP_HEIGHT+MAP_Y)){
         system("cls");
         gotoxy(17, 11, "game over");
-        return 1;  //return 1 í• ë¼ê³  int í˜•ì‹ìœ¼ë¡œ í•¨ìˆ˜ ë°”ê¿ˆ
+        return 1;  //return 1 ÇÒ¶ó°í int Çü½ÄÀ¸·Î ÇÔ¼ö ¹Ù²Ş
     }
-
-
     if(snake[0].x == food_x && snake[0].y == food_y){  
-        //ë±€ì´ ë¨¹ì´ ë¨¹ì—ˆì„ ë•Œ score 100ì  ì˜¤ë¥´ê³ , food ë‹¤ë¥¸ ê³³ì— ë˜ ìƒì„±
+        //¹ìÀÌ ¸ÔÀÌ ¸Ô¾úÀ» ¶§ score 100Á¡ ¿À¸£°í, food ´Ù¸¥ °÷¿¡ ¶Ç »ı¼º
         score+=100;
         gotoxy(40, 17, "score: ");
         printf("%d", score);
@@ -161,22 +157,22 @@ int moveSnake(Snake *snake, int length, Direction direction){
         food(snake, length);
     }
     else {
-        // ë¨¹ì´ë¥¼ ë¨¹ì§€ ì•Šì•˜ì„ ë•Œ
-        // ì´ì „ ê¼¬ë¦¬ì˜ ìœ„ì¹˜
+        // ¸ÔÀÌ¸¦ ¸ÔÁö ¾Ê¾ÒÀ» ¶§
+        // ÀÌÀü ²¿¸®ÀÇ À§Ä¡
         preTailX = snake[length - 1].x;
         preTailY = snake[length - 1].y;
 
-        // ê¼¬ë¦¬ë¥¼ í•œ ì¹¸ ì•ìœ¼ë¡œ ì´ë™
+        // ²¿¸®¸¦ ÇÑ Ä­ ¾ÕÀ¸·Î ÀÌµ¿
         for (int i = length - 1; i > 0; i--) {
             snake[i].x = snake[i - 1].x;
             snake[i].y = snake[i - 1].y;
         }
 
-        // ì´ì „ ê¼¬ë¦¬ì˜ ìì·¨ ì§€ìš°ê¸°
+        // ÀÌÀü ²¿¸®ÀÇ ÀÚÃë Áö¿ì±â
         gotoxy(preTailX, preTailY, " ");
     }
 
-    //ë°©í–¥í‚¤ì— ë”°ë¼ì„œ ë¨¸ë¦¬ ìœ„ì¹˜ ì—…ë°ì´íŠ¸
+    //¹æÇâÅ°¿¡ µû¶ó¼­ ¸Ó¸® À§Ä¡ ¾÷µ¥ÀÌÆ®
     switch(direction) {
         case UP:
             headY--;
@@ -193,29 +189,29 @@ int moveSnake(Snake *snake, int length, Direction direction){
         default:
             break;
     }
-    // ë¨¸ë¦¬ì˜ ìƒˆë¡œìš´ ìœ„ì¹˜ ê·¸ë¦¬ê¸°
-    gotoxy(headX, headY, "â– ");
-    // ê¼¬ë¦¬ì˜ ìœ„ì¹˜ ì—…ë°ì´íŠ¸
+    // ¸Ó¸®ÀÇ »õ·Î¿î À§Ä¡ ±×¸®±â
+    gotoxy(headX, headY, "¤¾");
+    // ²¿¸®ÀÇ À§Ä¡ ¾÷µ¥ÀÌÆ®
     snake[0].x = headX;
     snake[0].y = headY;
    
-    // ëª¸í†µ ê·¸ë¦¬ê¸°
+    // ¸öÅë ±×¸®±â
     for (int i = 1; i <= length - 1; i++) {
-        gotoxy(snake[i].x, snake[i].y, "â– ");
+        gotoxy(snake[i].x, snake[i].y, "¤·");
     }
     Sleep(500);
 }
 
-void food(Snake *snake, int snakeLength){ //ë¨¹ì´ ìƒì„±
-    int food_rand;  //ìŒì‹ì´ ëª¸ì´ë‘ ê²¹ì¹˜ëŠ”ì§€ ìœ„í•œ íŒë³„í•˜ê¸° ìœ„í•œ ë³€ìˆ˜
+void food(Snake *snake, int snakeLength){ //¸ÔÀÌ »ı¼º
+    int food_rand;  //À½½ÄÀÌ ¸öÀÌ¶û °ãÄ¡´ÂÁö À§ÇÑ ÆÇº°ÇÏ±â À§ÇÑ º¯¼ö
 
-    //ë±€ ë¨¸ë¦¬ë‘ ëª¸ ìª½ì— ë¨¹ì´ ìƒê¸°ì§€ ì•Šê²Œ í•˜ê¸°
+    //¹ì ¸Ó¸®¶û ¸ö ÂÊ¿¡ ¸ÔÀÌ »ı±âÁö ¾Ê°Ô ÇÏ±â
     do{
         food_rand = 0;
-        srand(time(NULL));     //ë‚œìˆ˜ ì§€ì†ì ìœ¼ë¡œ ì´ˆê¸°í™”
+        srand(time(NULL));     //³­¼ö Áö¼ÓÀûÀ¸·Î ÃÊ±âÈ­
 
-        food_x = rand()%(MAP_WIDTH-1)+(MAP_X+1);  // Xì¢Œí‘œì— ë‚œìˆ˜ ê°’ ë„£ê¸°
-        food_y = rand()%(MAP_HEIGHT-1)+(MAP_Y+1); // yì¢Œí‘œì— ë‚œìˆ˜ ê°’ ë„£ê¸°
+        food_x = rand()%(MAP_WIDTH-1)+(MAP_X+1);  // XÁÂÇ¥¿¡ ³­¼ö °ª ³Ö±â
+        food_y = rand()%(MAP_HEIGHT-1)+(MAP_Y+1); // yÁÂÇ¥¿¡ ³­¼ö °ª ³Ö±â
         
         for(int i=0; i<snakeLength; i++){
             if(food_x == snake[i].x && food_y == snake[i].y){
@@ -224,7 +220,7 @@ void food(Snake *snake, int snakeLength){ //ë¨¹ì´ ìƒì„±
             }
         }
 
-    }while(food_rand);     // ë§Œì•½ food_randê°’ì´ 1ì´ ë˜ë©´ ë°˜ë³µë¬¸ ì‹¤í–‰ í•˜ê³  ì•ˆë˜ë©´ ê·¸ëƒ¥ ì¶œë ¥ë˜ê²Œ
+    }while(food_rand);     // ¸¸¾à food_rand°ªÀÌ 1ÀÌ µÇ¸é ¹İº¹¹® ½ÇÇà ÇÏ°í ¾ÈµÇ¸é ±×³É Ãâ·ÂµÇ°Ô
 
     gotoxy(food_x, food_y, "@");
 }
