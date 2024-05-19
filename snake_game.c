@@ -13,6 +13,7 @@
 
 int score = 0;
 int food_x, food_y; //음식 최초 점수
+char nickname[3][20];
 
 //지렁이의 위치를 나타내는 구조체
 typedef struct{
@@ -141,10 +142,11 @@ int moveSnake(Snake *snake, int length, Direction direction){
 
     if(snake[0].x==MAP_X || snake[0].x==(MAP_WIDTH+MAP_X) || snake[0].y==MAP_Y || snake[0].y == (MAP_HEIGHT+MAP_Y)){
         system("cls");
-        gotoxy(17, 11, "game over");
+        map(nickname);
+        gotoxy(15, 12, "game over");
+        gotoxy(0, 80,"\n");
         return 1;  //return 1 할라고 int 형식으로 함수 바꿈
     }
-
 
     if(snake[0].x == food_x && snake[0].y == food_y){  
         //뱀이 먹이 먹었을 때 score 100점 오르고, food 다른 곳에 또 생성

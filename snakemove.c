@@ -14,6 +14,8 @@
 int score = 0;
 int food_x, food_y; //음식 최초 점수
 
+
+
 //지렁이의 위치를 나타내는 구조체
 typedef struct{
     int x;

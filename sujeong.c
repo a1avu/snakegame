@@ -13,6 +13,7 @@
 
 int score = 0;
 int food_x, food_y; //음식 최초 점수
+char nickname[3][20];           // →   nickname 전역변수로 바꿨어용
 
 //지렁이의 위치를 나타내는 구조체
 typedef struct{
@@ -40,11 +41,10 @@ void inter_face(char nickname[3][20]);
 void map(char nickname[3][20]);
 int moveSnake(Snake *snake, int length, Direction direction);
 void food(Snake *snake, int snakeLength);
-void reset(Snake *snake, int snakeLength);
+void reset(Snake *snake, int snakeLength); //*int snakeLength
 
 
 int main(void){
-    char nickname[3][20];
     Snake snake[100]; // 최대길이를 100으로 선언
     Direction direction = RIGHT; // 방향 변수를 초기화
 
@@ -82,6 +82,7 @@ int main(void){
 }
 
 void inter_face(char nickname[3][20]){
+    system("cls");
     int i, j;
 
     for(i = MAP_X; i<=MAP_WIDTH+MAP_X; i++){
@@ -127,13 +128,13 @@ void reset(Snake *snake, int snakeLength){
     for (int i = 0; i < Initial_Length; i++) {
         snake[i].x = MAP_WIDTH/2 - i; //초기에 머리가 가장 오른쪽에 위치 몸통이 왼쪽으로 이어지도록 하기 위함. i가 증가함에 따라 몸통의 좌표가 왼쪽으로 하나씩 이동
         snake[i].y = MAP_HEIGHT/2;
-   gotoxy(snake[i].x, snake[i].y,"ㅇ");
+        gotoxy(snake[i].x, snake[i].y,"ㅇ");
     }
     gotoxy(snake[0].x,snake[0].y,"ㅎ"); 
     //일단 머리는 ㅎ으로 몸통은 ㅇ(한글)로 바꿔둠.
     Direction direction = RIGHT; //오른쪽으로 이동하게 함.
     
-    food(snake, snakeLength);  //음식 생성
+    food(snake, snakeLength);  //음식 생성a
 }
 // 일단 나는 140번쨰 줄까지 보고 수정해둠!!!!!!
 
@@ -145,9 +146,12 @@ int moveSnake(Snake *snake, int length, Direction direction){
 
     if(snake[0].x==MAP_X || snake[0].x==(MAP_WIDTH+MAP_X) || snake[0].y==MAP_Y || snake[0].y == (MAP_HEIGHT+MAP_Y)){
         system("cls");
-        gotoxy(17, 11, "game over");
+        map(nickname);
+        gotoxy(15, 12, "game over");
+        gotoxy(0, MAP_HEIGHT + MAP_Y + 2, "\n");    //  →  gameover 되도 맵 유지
         return 1;  //return 1 할라고 int 형식으로 함수 바꿈
     }
+
     if(snake[0].x == food_x && snake[0].y == food_y){  
         //뱀이 먹이 먹었을 때 score 100점 오르고, food 다른 곳에 또 생성
         score+=100;
@@ -203,6 +207,7 @@ int moveSnake(Snake *snake, int length, Direction direction){
     snake[0].x = headX;
     snake[0].y = headY;
     Sleep(500);
+    return 0;         //return 0;  로 게임이 안끝났음을 보냈습니당  여태 이거땜에
 }
 
 void food(Snake *snake, int snakeLength){ //먹이 생성
