@@ -94,11 +94,9 @@ int main(void) {
                     snakeLength = Initial_Length;
                     speed = 500;
                     player_i += 1;
-                    if(_getch() == 'e'){
-                        exit(0);                        
-                    }
+
                     inter_face();
-                    map("",0);
+                    map(player[player_i].nickname, player[player_i].score);
                     reset(snake, &snakeLength);
                     continue;
                 case 101:         //아예 게임 꺼버리는 exit (랭킹창은 나옴)
@@ -225,8 +223,10 @@ void game_over(){
         printf("%d", player[i].score);
         }
     }
-    gotoxy(5, 21, "Press any key to restart the game (<e> to real exit )");
-    gotoxy(0, MAP_Y+MAP_HEIGHT, "");
+    gotoxy(5, 21, "Press any key to restart the game (<e> to real exit)");
+    if(_getch() == 'e'){
+        exit(0);                        
+    }
 }
 
 int moveSnake(Snake *snake, int *length, Direction direction) {
