@@ -13,7 +13,8 @@
 int speed = 500; // 속도 추가
 int score = 0;
 int food_x, food_y;
-char nickname[3][20];
+char nickname[10][20];
+int nickname_i = 0;            //nickname의 i값 받을 전역변수
 
 typedef struct {
     int x;
@@ -35,8 +36,8 @@ void gotoxy(int x, int y, char* s) {
     printf("%s", s);
 }
 
-void inter_face(char nickname[3][20]);
-void map(char nickname[3][20]);
+void inter_face(char nickname[10][20]);
+void map(char nickname[10][20]);
 int moveSnake(Snake *snake, int *length, Direction direction);
 void food(Snake *snake, int snakeLength);
 void reset(Snake *snake, int *snakeLength);
@@ -69,16 +70,29 @@ int main(void) {
                 case 77: // 방향키 오른쪽
                     if (direction != LEFT) direction = RIGHT;
                     break;
-            case 112:   // pause 24.05.27
+                case 112:   // pause 24.05.27
                     system("cls");
                     map(nickname);
                     gotoxy(8, 12, "press any key if you want resume this game");
                     if(_getch()){
                         system("cls");
                         map(nickname);
-                        food(snake, snakeLength);   
+                        food(snake, snakeLength);  
                         continue;
                     }
+                case 27:          //랭킹창으로만 가는 exit
+                    game_over();               
+                    gotoxy(11, 21, "Press any key to restart the game");
+                    _getch();
+                    nickname_i += 1;
+                    inter_face(nickname);
+                    map(nickname);
+                    reset(snake, &snakeLength);
+                    continue;
+
+                case 101:         //아예 게임 꺼버리는 exit (랭킹창은 나옴)
+                    game_over();
+                    exit(0);
                 default:
                     break;
             }
@@ -93,7 +107,7 @@ int main(void) {
     return 0;
 }
 
-void inter_face(char nickname[3][20]) {
+void inter_face(char nickname[10][20]) {
     system("cls");
     int i, j;
 
@@ -108,15 +122,15 @@ void inter_face(char nickname[3][20]) {
         gotoxy(i, MAP_Y + MAP_HEIGHT, "■");
     }
 
-    gotoxy(13, 9, "★ 게임 시작 ★");
+    gotoxy(15, 9, "★ 게임 시작 ★");
     gotoxy(12, 11, "방향키로 조작 합니다.");
-    gotoxy(8, 12, "아무키나 입력하면 게임이 시작됩니다.");
+    gotoxy(8, 12, "닉네임을 입력하면 게임이 시작됩니다.");
     gotoxy(12, 15, "nickname : ");
-    scanf("%s", nickname[0]);
+    scanf("%s", nickname[nickname_i]);
     system("cls");
 }
 
-void map(char nickname[3][20]) {
+void map(char nickname[10][20]) {
     int i, j;
 
     for (i = MAP_X; i <= MAP_WIDTH + MAP_X; i++) {
@@ -129,9 +143,16 @@ void map(char nickname[3][20]) {
     for (i = MAP_X; i <= MAP_WIDTH + MAP_X; i++) {
         gotoxy(i, MAP_Y + MAP_HEIGHT, "■");
     }
-    gotoxy(40, 13, "P : pause");
+
+    gotoxy(42, 4, "<조작법>");
+    gotoxy(40, 6, "<방향키> : →, ←, ↑, ↓");
+    gotoxy(40, 7, "<Esc> : exit");
+    gotoxy(40, 8, " <P> : pause");
+    gotoxy(40, 9, " <e> : real exit game");
+    
+    gotoxy(42, 13,"<STATUS>");
     gotoxy(40, 15, "nickname: ");
-    printf("%s", nickname);
+    printf("%s", nickname[nickname_i]);
     gotoxy(40, 17, "score: ");
     printf("%d", score);
     gotoxy(40, 19, "speed: ");
@@ -154,8 +175,21 @@ void reset(Snake *snake, int *snakeLength) {
 void game_over(){
     system("cls");
     map(nickname);
-    gotoxy(15, 12, "game over");
-    gotoxy(0, MAP_HEIGHT + MAP_Y + 2, "\n");
+    gotoxy(16, 3, "game over");
+    gotoxy(14, 5, "<top 10 ranker>");
+
+    for(int i = 0; i<10; i++){
+        if(i<3){
+        gotoxy(10, 8+i,"");
+        printf("**<%d>**      %s        \n", i+1, nickname[i]);
+        }
+        else{
+        gotoxy(11, 8+i,"");            
+        printf("<%d>      %s \n", i+1, nickname[i]);
+        }
+    }
+
+    gotoxy(0, MAP_Y+MAP_HEIGHT, "");
 }
 
 int moveSnake(Snake *snake, int *length, Direction direction) {

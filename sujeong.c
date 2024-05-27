@@ -1,9 +1,8 @@
-/* 140번째 줄까지 수정함 */
 #include<stdio.h>
-#include<stdlib.h>  //rand()
-#include<time.h>    // rand값 초기화
-#include<windows.h> // gotoxy
-#include<conio.h> // 콘솔 입출력 getch()
+#include<stdlib.h>
+#include<time.h>
+#include<windows.h>
+#include<conio.h>
 
 #define MAP_WIDTH 30
 #define MAP_HEIGHT 20
@@ -11,173 +10,267 @@
 #define MAP_Y 2
 #define Initial_Length 5
 
-int score = 0;
-int food_x, food_y; //음식 최초 점수
-char nickname[3][20];           // →   nickname 전역변수로 바꿨어용
+int speed = 500; // 속도 추가
+int food_x, food_y;
 
-//지렁이의 위치를 나타내는 구조체
-typedef struct{
+
+
+typedef struct {
+    int score;
+    char nickname[20];        //nickname이랑 score 묶기 위한 구조체 생성
+} Player;
+
+Player player[11];          //추가 되는 사람은 항상 11번째 인덱스에 위치하게 했음 (어차피 출력은 10번까지 밖에 안되니)
+int player_i = 0;            //nickname의 i값 받을 전역변수
+
+
+typedef struct {
     int x;
     int y;
-    }Snake;
-// 지렁이의 이동방향을 나타내는 열거형
-typedef enum{
+} Snake;
+
+typedef enum {
     UP,
     DOWN,
     LEFT,
     RIGHT
 } Direction;
 
-//gotoxy함수 만들고 포인터 이용해서 원하는 텍스트 찍을 수 있게 했음
-void gotoxy(int x, int y, char* s){       
+void gotoxy(int x, int y, char* s) {
     COORD Pos;
-    Pos.X = 2*x;
+    Pos.X = 2 * x;
     Pos.Y = y;
     SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), Pos);
     printf("%s", s);
 }
 
-void inter_face(char nickname[3][20]);
-void map(char nickname[3][20]);
-int moveSnake(Snake *snake, int length, Direction direction);
+void inter_face();
+void map(char* nickname, int score);
+int moveSnake(Snake *snake, int *length, Direction direction);
 void food(Snake *snake, int snakeLength);
-void reset(Snake *snake, int snakeLength); //*int snakeLength
+void reset(Snake *snake, int *snakeLength);
+void game_over();
+void ranking_sort();
 
+int main(void) {
+    Snake snake[100];
+    Direction direction = RIGHT;
+    int snakeLength = Initial_Length;
 
-int main(void){
-    Snake snake[100]; // 최대길이를 100으로 선언
-    Direction direction = RIGHT; // 방향 변수를 초기화
+    inter_face();
+    map(player[player_i].nickname, player[player_i].score);
+    reset(snake, &snakeLength);
 
-    inter_face(nickname);
-    map(nickname);
-    int snakeLength = Initial_Length; //나중에 먹이 먹어서 몸 길어질때 사용할 변수.
-    reset(snake,snakeLength);
+    DWORD lastMoveTime = GetTickCount();
 
-    while(1){
-        if (_kbhit()) { // 사용자 입력 감지
+    while (1) {
+        if (_kbhit()) {
             char ch = _getch();
-            switch(ch) {
+            switch (ch) {
                 case 72: // 방향키 위쪽
-                   direction = UP;
+                    if (direction != DOWN) direction = UP;
                     break;
                 case 80: // 방향키 아래쪽
-                    direction = DOWN;
+                    if (direction != UP) direction = DOWN;
                     break;
                 case 75: // 방향키 왼쪽
-                    direction = LEFT;
+                    if (direction != RIGHT) direction = LEFT;
                     break;
                 case 77: // 방향키 오른쪽
-                    direction = RIGHT;
+                    if (direction != LEFT) direction = RIGHT;
                     break;
+                case 112:   // pause 24.05.27
+                    system("cls");
+                    map(player[player_i].nickname, player[player_i].score);
+                    gotoxy(8, 12, "press any key if you want resume this game");
+                    if(_getch() == 'p'){
+                        system("cls");
+                        map(player[player_i].nickname, player[player_i].score);
+                        food(snake, snakeLength);  
+                        continue;
+                    }
+                case 27:          //랭킹창으로만 가는 exit
+                    game_over();
+                    snakeLength = Initial_Length;
+                    speed = 500;
+                    player_i += 1;
+                    if(_getch() == 'e'){
+                        exit(0);                        
+                    }
+                    inter_face();
+                    map("",0);
+                    reset(snake, &snakeLength);
+                    continue;
+                case 101:         //아예 게임 꺼버리는 exit (랭킹창은 나옴)
+                    game_over();
+                    exit(0);
                 default:
                     break;
             }
         }
-        moveSnake(snake, snakeLength, direction);
-        if(moveSnake(snake, snakeLength, direction) == 1)
-            break;
-    }  
+        
+        if (GetTickCount() - lastMoveTime > 100) { // 이동 주기를 100ms로 설정
+            if (moveSnake(snake, &snakeLength, direction) == 1){
+                                                            //충돌사망 후 다시 게임 할 시에 이케 만들어봄
+                game_over();
+                snakeLength = Initial_Length;
+                speed = 500;
+                player_i += 1;
+                _getch();
+                inter_face();
+                map(player[player_i].nickname, player[player_i].score);
+                reset(snake, &snakeLength);
+                direction = RIGHT;
+                lastMoveTime = GetTickCount();
+
+            }
+            lastMoveTime = GetTickCount();
+        }
+    }
 
     return 0;
 }
 
-void inter_face(char nickname[3][20]){
+void inter_face() {
     system("cls");
     int i, j;
 
-    for(i = MAP_X; i<=MAP_WIDTH+MAP_X; i++){
+    for (i = MAP_X; i <= MAP_WIDTH + MAP_X; i++) {
         gotoxy(i, MAP_Y, "■");
     }
-    for(j= MAP_Y + 1; j<=MAP_HEIGHT+MAP_Y; j++){
+    for (j = MAP_Y + 1; j <= MAP_HEIGHT + MAP_Y; j++) {
         gotoxy(MAP_X, j, "■");
         gotoxy(MAP_X + MAP_WIDTH, j, "■");
     }
-    for(i = MAP_X; i<=MAP_WIDTH+MAP_X; i++){
+    for (i = MAP_X; i <= MAP_WIDTH + MAP_X; i++) {
         gotoxy(i, MAP_Y + MAP_HEIGHT, "■");
     }
 
-    gotoxy(13, 9, "★ 게임 시작 ★");
+    gotoxy(15, 9, "★ 게임 시작 ★");
     gotoxy(12, 11, "방향키로 조작 합니다.");
-    gotoxy(8, 12, "아무키나 입력하면 게임이 시작됩니다.");
-    gotoxy(12, 15,"nickname : ");
-    scanf("%s",nickname[0]);
+    gotoxy(8, 12, "닉네임을 입력하면 게임이 시작됩니다.");
+    gotoxy(12, 15, "nickname : ");
+    scanf("%s", player[player_i].nickname);
     system("cls");
 }
 
-void map(char nickname[3][20]){  //interface에서 nickname 받아와서 사용
+void map(char *nickname, int score) {       //map함수에 파라미터 넣어줘서 gameover 시에는 status 창 전체 초기화
     int i, j;
 
-    for(i = MAP_X; i<=MAP_WIDTH+MAP_X; i++){
+    for (i = MAP_X; i <= MAP_WIDTH + MAP_X; i++) {
         gotoxy(i, MAP_Y, "■");
     }
-    for(j= MAP_Y + 1; j<=MAP_HEIGHT+MAP_Y; j++){
+    for (j = MAP_Y + 1; j <= MAP_HEIGHT + MAP_Y; j++) {
         gotoxy(MAP_X, j, "■");
         gotoxy(MAP_X + MAP_WIDTH, j, "■");
     }
-    for(i = MAP_X; i<=MAP_WIDTH+MAP_X; i++){
+    for (i = MAP_X; i <= MAP_WIDTH + MAP_X; i++) {
         gotoxy(i, MAP_Y + MAP_HEIGHT, "■");
     }
 
+    gotoxy(42, 4, "<조작법>");
+    gotoxy(40, 6, "<방향키> : →, ←, ↑, ↓");
+    gotoxy(40, 7, "<Esc> : exit");
+    gotoxy(40, 8, " <P> : pause");
+    gotoxy(40, 9, " <e> : real exit game");
+    
+    gotoxy(42, 13,"<STATUS>");
     gotoxy(40, 15, "nickname: ");
     printf("%s", nickname);
     gotoxy(40, 17, "score: ");
     printf("%d", score);
+    gotoxy(40, 19, "speed: ");
+    printf("%d", -(speed-500));
+    gotoxy(38, 20, "<MAX SPEED : 500>");
 }
-void reset(Snake *snake, int snakeLength){
-                    
-    for (int i = 0; i < Initial_Length; i++) {
-        snake[i].x = MAP_WIDTH/2 - i; //초기에 머리가 가장 오른쪽에 위치 몸통이 왼쪽으로 이어지도록 하기 위함. i가 증가함에 따라 몸통의 좌표가 왼쪽으로 하나씩 이동
-        snake[i].y = MAP_HEIGHT/2;
-        gotoxy(snake[i].x, snake[i].y,"ㅇ");
-    }
-    gotoxy(snake[0].x,snake[0].y,"ㅎ"); 
-    //일단 머리는 ㅎ으로 몸통은 ㅇ(한글)로 바꿔둠.
-    Direction direction = RIGHT; //오른쪽으로 이동하게 함.
-    
-    food(snake, snakeLength);  //음식 생성a
-}
-// 일단 나는 140번쨰 줄까지 보고 수정해둠!!!!!!
 
-int moveSnake(Snake *snake, int length, Direction direction){
+void reset(Snake *snake, int *snakeLength) {
+    player[player_i].score = 0;
+
+    for (int i = 0; i < Initial_Length; i++) {
+        snake[i].x = MAP_WIDTH / 2 - i;
+        snake[i].y = MAP_HEIGHT / 2;
+        gotoxy(snake[i].x, snake[i].y, "ㅇ");
+    }
+    gotoxy(snake[0].x, snake[0].y, "ㅎ");
+    Direction direction = RIGHT;
+    food(snake, *snakeLength);
+}
+
+//game over 쓸 곳이 많아서 함수로 만들었습니다  24.05.27
+void game_over(){
+    system("cls");
+    speed = 500;
+    map("",0);
+
+    ranking_sort();
+    gotoxy(16, 3, "game over");
+    gotoxy(14, 5, "<top 10 ranker>");
+
+    for(int i = 0; i<10; i++){
+        if(i<3){
+        gotoxy(10, 8+i,"");
+        printf("**<%d>**", i+1);
+        gotoxy(15 , 8+i, "");
+        printf("%s",player[i].nickname);
+        gotoxy(18, 8+i, "");
+        printf("%d", player[i].score);
+        }
+        else{
+        gotoxy(11, 8+i,"");            
+        printf("<%d>", i+1);
+        gotoxy(15 , 8+i, "");
+        printf("%s",player[i].nickname);
+        gotoxy(18, 8+i, "");
+        printf("%d", player[i].score);
+        }
+    }
+    gotoxy(5, 21, "Press any key to restart the game (<e> to real exit )");
+    gotoxy(0, MAP_Y+MAP_HEIGHT, "");
+}
+
+int moveSnake(Snake *snake, int *length, Direction direction) {
     int preTailX, preTailY;
-    // 머리 위치 저장
     int headX = snake[0].x;
     int headY = snake[0].y;
 
-    if(snake[0].x==MAP_X || snake[0].x==(MAP_WIDTH+MAP_X) || snake[0].y==MAP_Y || snake[0].y == (MAP_HEIGHT+MAP_Y)){
-        system("cls");
-        map(nickname);
-        gotoxy(15, 12, "game over");
-        gotoxy(0, MAP_HEIGHT + MAP_Y + 2, "\n");    //  →  gameover 되도 맵 유지
-        return 1;  //return 1 할라고 int 형식으로 함수 바꿈
+    // 벽 충돌
+    if (snake[0].x == MAP_X || snake[0].x == (MAP_WIDTH + MAP_X) || snake[0].y == MAP_Y || snake[0].y == (MAP_HEIGHT + MAP_Y)) {
+        game_over();
+        return 1;
     }
-
-    if(snake[0].x == food_x && snake[0].y == food_y){  
-        //뱀이 먹이 먹었을 때 score 100점 오르고, food 다른 곳에 또 생성
-        score+=100;
+    // 먹이 먹었을 때
+    if (snake[0].x == food_x && snake[0].y == food_y) {
+        player[player_i].score += 100;
         gotoxy(40, 17, "score: ");
-        printf("%d", score);
-        length++;
-        food(snake, length);
+        printf("%d", player[player_i].score);
+        (*length)++;
+        food(snake, *length);
+        if(speed>0)
+            speed -= 10;            //속도 증가 추가 24.05.27
+        gotoxy(40, 19,"speed: ");
+        printf("%d", -(speed-500));
     }
     else {
-        // 먹이를 먹지 않았을 때
-        // 이전 꼬리의 위치
-        preTailX = snake[length - 1].x;
-        preTailY = snake[length - 1].y;
-
-        // 꼬리를 한 칸 앞으로 이동
-        for (int i = length - 1; i > 0; i--) {
-            snake[i].x = snake[i - 1].x;
-            snake[i].y = snake[i - 1].y;
-        }
-
-        // 이전 꼬리의 자취 지우기
+        preTailX = snake[*length - 1].x;
+        preTailY = snake[*length - 1].y;
         gotoxy(preTailX, preTailY, " ");
     }
 
-    //방향키에 따라서 머리 위치 업데이트
-    switch(direction) {
+    //자기몸과 충돌했는지 알아보기
+    for(int i=1; i< *length; i++){
+        if(snake[0].x==snake[i].x && snake[0].y==snake[i].y){
+            game_over();
+            return 1;
+        }
+    }
+
+    for (int i = *length - 1; i > 0; i--) {
+        snake[i].x = snake[i - 1].x;
+        snake[i].y = snake[i - 1].y;
+    }
+
+    switch (direction) {
         case UP:
             headY--;
             break;
@@ -193,52 +286,54 @@ int moveSnake(Snake *snake, int length, Direction direction){
         default:
             break;
     }
+
+    // 머리의 이전 위치를 몸통으로 표시
+    gotoxy(snake[0].x, snake[0].y, "ㅇ");
+
     // 머리의 새로운 위치 그리기
     gotoxy(headX, headY, "ㅎ");
-    // 꼬리의 위치 업데이트
     snake[0].x = headX;
     snake[0].y = headY;
-   
-    // 몸통 그리기
-    for (int i = 1; i <= length - 1; i++) {
+
+    for (int i = 1; i <= *length - 1; i++) {
         gotoxy(snake[i].x, snake[i].y, "ㅇ");
     }
-     // 뱀의 새로운 위치 업데이트
-    snake[0].x = headX;
-    snake[0].y = headY;
-    Sleep(500);
-    return 0;         //return 0;  로 게임이 안끝났음을 보냈습니당  여태 이거땜에
+
+    Sleep(speed); // 이동 주기를 줄여서 더 빠르게 움직이도록 함
+    return 0;
 }
 
-void food(Snake *snake, int snakeLength){ //먹이 생성
-    int food_rand;  //음식이 몸이랑 겹치는지 위한 판별하기 위한 변수
+void food(Snake *snake, int snakeLength) {
+    int food_rand;
 
-    //뱀 머리랑 몸 쪽에 먹이 생기지 않게 하기
-    do{
+    do {
         food_rand = 0;
-        srand(time(NULL));     //난수 지속적으로 초기화
+        srand(time(NULL));
 
-        food_x = rand()%(MAP_WIDTH-1)+(MAP_X+1);  // X좌표에 난수 값 넣기
-        food_y = rand()%(MAP_HEIGHT-1)+(MAP_Y+1); // y좌표에 난수 값 넣기
-        
-        for(int i=0; i<snakeLength; i++){
-            if(food_x == snake[i].x && food_y == snake[i].y){
+        food_x = rand() % (MAP_WIDTH - 1) + (MAP_X + 1);
+        food_y = rand() % (MAP_HEIGHT - 1) + (MAP_Y + 1);
+
+        for (int i = 0; i < snakeLength; i++) {
+            if (food_x == snake[i].x && food_y == snake[i].y) {
                 food_rand = 1;
                 break;
             }
         }
 
-    }while(food_rand);     // 만약 food_rand값이 1이 되면 반복문 실행 하고 안되면 그냥 출력되게
+    } while (food_rand);
 
     gotoxy(food_x, food_y, "@");
 }
 
-
-
-/*
-이번 주 할거
-1. length 포인터로 바꾸기
-2. GetTickCount 어떻게 쓰는지 공부하기
-3. 
-
-*/
+void ranking_sort(){
+    Player temp;
+    for(int i = 0; i<10; i++){
+        for(int j = 0; j< 10 - i; j++){
+                if(player[j].score<player[j+1].score){
+                    temp = player[j];
+                    player[j] = player[j+1];
+                    player[j+1] = temp;
+                }
+        }
+    }
+}
