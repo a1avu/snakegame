@@ -89,15 +89,19 @@ int main(void) {
                         food(snake, snakeLength);  
                         continue;
                     }
-                case 27:          //랭킹창으로만 가는 exit
+                case 27:          // esc 랭킹창으로만 가는 exit
                     game_over();
+                if(_getch() == 'e'){        //이렇게 해야 getch가 한번만 실행됨 왜인진 모르겠음
+                    exit(0);                        
+                }                    
                     snakeLength = Initial_Length;
                     speed = 500;
                     player_i += 1;
-
                     inter_face();
                     map(player[player_i].nickname, player[player_i].score);
                     reset(snake, &snakeLength);
+                    direction = RIGHT;
+                    lastMoveTime = GetTickCount();
                     continue;
                 case 101:         //아예 게임 꺼버리는 exit (랭킹창은 나옴)
                     game_over();
@@ -111,10 +115,12 @@ int main(void) {
             if (moveSnake(snake, &snakeLength, direction) == 1){
                                                             //충돌사망 후 다시 게임 할 시에 이케 만들어봄
                 game_over();
+                if(_getch() == 'e'){
+                    exit(0);                        
+                }
                 snakeLength = Initial_Length;
                 speed = 500;
                 player_i += 1;
-                _getch();
                 inter_face();
                 map(player[player_i].nickname, player[player_i].score);
                 reset(snake, &snakeLength);
@@ -183,7 +189,6 @@ void map(char *nickname, int score) {       //map함수에 파라미터 넣어�
 }
 
 void reset(Snake *snake, int *snakeLength) {
-    player[player_i].score = 0;
 
     for (int i = 0; i < Initial_Length; i++) {
         snake[i].x = MAP_WIDTH / 2 - i;
@@ -211,7 +216,7 @@ void game_over(){
         printf("**<%d>**", i+1);
         gotoxy(15 , 8+i, "");
         printf("%s",player[i].nickname);
-        gotoxy(18, 8+i, "");
+        gotoxy(22, 8+i, "");
         printf("%d", player[i].score);
         }
         else{
@@ -219,14 +224,11 @@ void game_over(){
         printf("<%d>", i+1);
         gotoxy(15 , 8+i, "");
         printf("%s",player[i].nickname);
-        gotoxy(18, 8+i, "");
+        gotoxy(22, 8+i, "");
         printf("%d", player[i].score);
         }
     }
     gotoxy(5, 21, "Press any key to restart the game (<e> to real exit)");
-    if(_getch() == 'e'){
-        exit(0);                        
-    }
 }
 
 int moveSnake(Snake *snake, int *length, Direction direction) {
@@ -236,8 +238,7 @@ int moveSnake(Snake *snake, int *length, Direction direction) {
 
     // 벽 충돌
     if (snake[0].x == MAP_X || snake[0].x == (MAP_WIDTH + MAP_X) || snake[0].y == MAP_Y || snake[0].y == (MAP_HEIGHT + MAP_Y)) {
-        game_over();
-        return 1;
+        return 1;  //1만 리턴해도 gameover가 됨 main함수에서 받아줌
     }
     // 먹이 먹었을 때
     if (snake[0].x == food_x && snake[0].y == food_y) {
@@ -260,7 +261,6 @@ int moveSnake(Snake *snake, int *length, Direction direction) {
     //자기몸과 충돌했는지 알아보기
     for(int i=1; i< *length; i++){
         if(snake[0].x==snake[i].x && snake[0].y==snake[i].y){
-            game_over();
             return 1;
         }
     }
