@@ -232,3 +232,13 @@ void food(Snake *snake, int snakeLength){ //먹이 생성
 
     gotoxy(food_x, food_y, "@");
 }
+
+
+
+/*
+이번 주 할거
+1. length 포인터로 바꾸기
+2. GetTickCount 어떻게 쓰는지 공부하기
+3. 
+
+*/
