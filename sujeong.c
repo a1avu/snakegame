@@ -360,8 +360,7 @@ void save_scores(){
         printf("Error opening file!\n");
         return;
     }
-    for(int i=0; i<10 && i< player_i; i++){
-        fprintf(fp, "%s %d\n", player[i].nickname, player[i].score);
-    }
+    fprintf(fp, "%s %d\n", player[i].nickname, player[i].score);
+    //이거 바꿈
     fclose(fp);
 }
