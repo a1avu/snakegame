@@ -1,7 +1,7 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include<time.h>
-#include<windows.h>
+#include<windows.h>  
 #include<conio.h>
 
 #define MAP_WIDTH 30
@@ -51,8 +51,11 @@ void food(Snake *snake, int snakeLength);
 void reset(Snake *snake, int *snakeLength);
 void game_over();
 void ranking_sort();
+void load_scores();
+void save_score();
 
 int main(void) {
+    load_scores();
     Snake snake[100];
     Direction direction = RIGHT;
     int snakeLength = Initial_Length;
@@ -91,6 +94,7 @@ int main(void) {
                     }
                 case 27:          // esc 랭킹창으로만 가는 exit
                     game_over();
+                    save_score();
                 if(_getch() == 'e'){        //이렇게 해야 getch가 한번만 실행됨 왜인진 모르겠음
                     exit(0);                        
                 }                    
@@ -105,6 +109,7 @@ int main(void) {
                     continue;
                 case 101:         //아예 게임 꺼버리는 exit (랭킹창은 나옴)
                     game_over();
+                    save_score();
                     exit(0);
                 default:
                     break;
@@ -336,4 +341,27 @@ void ranking_sort(){
                 }
         }
     }
+}
+
+void load_scores(){
+    FILE *fp = fopen("score.txt", "r");
+    if(fp == NULL){
+        return;
+    }
+    player_i = 0;
+    while(fscanf(fp, "%s %d",player[player_i].nickname, &player[player_i].score)!=EOF && player_i <10){
+        player_i++;
+    }
+    fclose(fp);
+}
+void save_scores(){
+    FILE *fp = fopen("score.txt", "w");
+    if(fp == NULL){
+        printf("Error opening file!\n");
+        return;
+    }
+    for(int i=0; i<10 && i< player_i; i++){
+        fprintf(fp, "%s %d\n", player[i].nickname, player[i].score);
+    }
+    fclose(fp);
 }
