@@ -10,18 +10,18 @@
 #define MAP_Y 2
 #define Initial_Length 5
 
-int speed = 500; // ¼Óµµ Ãß°¡
+int speed = 500; // ì†ë„ ì¶”ê°€
 int food_x, food_y;
 
 
 
 typedef struct {
     int score;
-    char nickname[20];        //nicknameÀÌ¶û score ¹­±â À§ÇÑ ±¸Á¶Ã¼ »ı¼º
+    char nickname[20];        //nicknameì´ë‘ score ë¬¶ê¸° ìœ„í•œ êµ¬ì¡°ì²´ ìƒì„±
 } Player;
 
-Player player[11];          //Ãß°¡ µÇ´Â »ç¶÷Àº Ç×»ó 11¹øÂ° ÀÎµ¦½º¿¡ À§Ä¡ÇÏ°Ô ÇßÀ½ (¾îÂ÷ÇÇ Ãâ·ÂÀº 10¹ø±îÁö ¹Û¿¡ ¾ÈµÇ´Ï)
-int player_i = 0;            //nicknameÀÇ i°ª ¹ŞÀ» Àü¿ªº¯¼ö
+Player player[11];          //ì¶”ê°€ ë˜ëŠ” ì‚¬ëŒì€ í•­ìƒ 11ë²ˆì§¸ ì¸ë±ìŠ¤ì— ìœ„ì¹˜í•˜ê²Œ í–ˆìŒ (ì–´ì°¨í”¼ ì¶œë ¥ì€ 10ë²ˆê¹Œì§€ ë°–ì— ì•ˆë˜ë‹ˆ)
+int player_i = 0;            //nicknameì˜ iê°’ ë°›ì„ ì „ì—­ë³€ìˆ˜
 
 
 typedef struct {
@@ -70,16 +70,16 @@ int main(void) {
         if (_kbhit()) {
             char ch = _getch();
             switch (ch) {
-                case 72: // ¹æÇâÅ° À§ÂÊ
+                case 72: // ë°©í–¥í‚¤ ìœ„ìª½
                     if (direction != DOWN) direction = UP;
                     break;
-                case 80: // ¹æÇâÅ° ¾Æ·¡ÂÊ
+                case 80: // ë°©í–¥í‚¤ ì•„ë˜ìª½
                     if (direction != UP) direction = DOWN;
                     break;
-                case 75: // ¹æÇâÅ° ¿ŞÂÊ
+                case 75: // ë°©í–¥í‚¤ ì™¼ìª½
                     if (direction != RIGHT) direction = LEFT;
                     break;
-                case 77: // ¹æÇâÅ° ¿À¸¥ÂÊ
+                case 77: // ë°©í–¥í‚¤ ì˜¤ë¥¸ìª½
                     if (direction != LEFT) direction = RIGHT;
                     break;
                 case 112:   // pause 24.05.27
@@ -92,12 +92,12 @@ int main(void) {
                         food(snake, snakeLength);  
                         continue;
                     }
-                case 27:          // esc ·©Å·Ã¢À¸·Î¸¸ °¡´Â exit
+                case 27:          // esc ë­í‚¹ì°½ìœ¼ë¡œë§Œ ê°€ëŠ” exit
                     game_over();
                     save_scores();
-                if(_getch() == 'e'){        //ÀÌ·¸°Ô ÇØ¾ß getch°¡ ÇÑ¹ø¸¸ ½ÇÇàµÊ ¿ÖÀÎÁø ¸ğ¸£°ÚÀ½
-                    exit(0);                        
-                }                    
+                    if(_getch() == 'e'){        //ì´ë ‡ê²Œ í•´ì•¼ getchê°€ í•œë²ˆë§Œ ì‹¤í–‰ë¨ ì™œì¸ì§„ ëª¨ë¥´ê² ìŒ
+                        exit(0);                        
+                    }
                     snakeLength = Initial_Length;
                     speed = 500;
                     player_i += 1;
@@ -107,7 +107,7 @@ int main(void) {
                     direction = RIGHT;
                     lastMoveTime = GetTickCount();
                     continue;
-                case 101:         //¾Æ¿¹ °ÔÀÓ ²¨¹ö¸®´Â exit (·©Å·Ã¢Àº ³ª¿È)
+                case 101:         //ì•„ì˜ˆ ê²Œì„ êº¼ë²„ë¦¬ëŠ” exit (ë­í‚¹ì°½ì€ ë‚˜ì˜´)
                     game_over();
                     save_scores();
                     exit(0);
@@ -116,9 +116,9 @@ int main(void) {
             }
         }
         
-        if (GetTickCount() - lastMoveTime > 100) { // ÀÌµ¿ ÁÖ±â¸¦ 100ms·Î ¼³Á¤
+        if (GetTickCount() - lastMoveTime > 100) { // ì´ë™ ì£¼ê¸°ë¥¼ 100msë¡œ ì„¤ì •
             if (moveSnake(snake, &snakeLength, direction) == 1){
-                                                            //Ãæµ¹»ç¸Á ÈÄ ´Ù½Ã °ÔÀÓ ÇÒ ½Ã¿¡ ÀÌÄÉ ¸¸µé¾îº½
+                                                            //ì¶©ëŒì‚¬ë§ í›„ ë‹¤ì‹œ ê²Œì„ í•  ì‹œì— ì´ì¼€ ë§Œë“¤ì–´ë´„
                 game_over();
                 if(_getch() == 'e'){
                     exit(0);                        
@@ -145,40 +145,40 @@ void inter_face() {
     int i, j;
 
     for (i = MAP_X; i <= MAP_WIDTH + MAP_X; i++) {
-        gotoxy(i, MAP_Y, "¡á");
+        gotoxy(i, MAP_Y, "â– ");
     }
     for (j = MAP_Y + 1; j <= MAP_HEIGHT + MAP_Y; j++) {
-        gotoxy(MAP_X, j, "¡á");
-        gotoxy(MAP_X + MAP_WIDTH, j, "¡á");
+        gotoxy(MAP_X, j, "â– ");
+        gotoxy(MAP_X + MAP_WIDTH, j, "â– ");
     }
     for (i = MAP_X; i <= MAP_WIDTH + MAP_X; i++) {
-        gotoxy(i, MAP_Y + MAP_HEIGHT, "¡á");
+        gotoxy(i, MAP_Y + MAP_HEIGHT, "â– ");
     }
 
-    gotoxy(15, 9, "¡Ú °ÔÀÓ ½ÃÀÛ ¡Ú");
-    gotoxy(12, 11, "¹æÇâÅ°·Î Á¶ÀÛ ÇÕ´Ï´Ù.");
-    gotoxy(8, 12, "´Ğ³×ÀÓÀ» ÀÔ·ÂÇÏ¸é °ÔÀÓÀÌ ½ÃÀÛµË´Ï´Ù.");
+    gotoxy(15, 9, "â˜… ê²Œì„ ì‹œì‘ â˜…");
+    gotoxy(12, 11, "ë°©í–¥í‚¤ë¡œ ì¡°ì‘ í•©ë‹ˆë‹¤.");
+    gotoxy(8, 12, "ë‹‰ë„¤ì„ì„ ì…ë ¥í•˜ë©´ ê²Œì„ì´ ì‹œì‘ë©ë‹ˆë‹¤.");
     gotoxy(12, 15, "nickname : ");
     scanf("%s", player[player_i].nickname);
     system("cls");
 }
 
-void map(char *nickname, int score) {       //mapÇÔ¼ö¿¡ ÆÄ¶ó¹ÌÅÍ ³Ö¾îÁà¼­ gameover ½Ã¿¡´Â status Ã¢ ÀüÃ¼ ÃÊ±âÈ­
+void map(char *nickname, int score) {       //mapí•¨ìˆ˜ì— íŒŒë¼ë¯¸í„° ë„£ì–´ì¤˜ì„œ gameover ì‹œì—ëŠ” status ì°½ ì „ì²´ ì´ˆê¸°í™”
     int i, j;
 
     for (i = MAP_X; i <= MAP_WIDTH + MAP_X; i++) {
-        gotoxy(i, MAP_Y, "¡á");
+        gotoxy(i, MAP_Y, "â– ");
     }
     for (j = MAP_Y + 1; j <= MAP_HEIGHT + MAP_Y; j++) {
-        gotoxy(MAP_X, j, "¡á");
-        gotoxy(MAP_X + MAP_WIDTH, j, "¡á");
+        gotoxy(MAP_X, j, "â– ");
+        gotoxy(MAP_X + MAP_WIDTH, j, "â– ");
     }
     for (i = MAP_X; i <= MAP_WIDTH + MAP_X; i++) {
-        gotoxy(i, MAP_Y + MAP_HEIGHT, "¡á");
+        gotoxy(i, MAP_Y + MAP_HEIGHT, "â– ");
     }
 
-    gotoxy(42, 4, "<Á¶ÀÛ¹ı>");
-    gotoxy(40, 6, "<¹æÇâÅ°> : ¡æ, ¡ç, ¡è, ¡é");
+    gotoxy(42, 4, "<ì¡°ì‘ë²•>");
+    gotoxy(40, 6, "<ë°©í–¥í‚¤> : â†’, â†, â†‘, â†“");
     gotoxy(40, 7, "<Esc> : exit");
     gotoxy(40, 8, " <P> : pause");
     gotoxy(40, 9, " <e> : real exit game");
@@ -198,14 +198,14 @@ void reset(Snake *snake, int *snakeLength) {
     for (int i = 0; i < Initial_Length; i++) {
         snake[i].x = MAP_WIDTH / 2 - i;
         snake[i].y = MAP_HEIGHT / 2;
-        gotoxy(snake[i].x, snake[i].y, "¤·");
+        gotoxy(snake[i].x, snake[i].y, "ã…‡");
     }
-    gotoxy(snake[0].x, snake[0].y, "¤¾");
+    gotoxy(snake[0].x, snake[0].y, "ã…");
     Direction direction = RIGHT;
     food(snake, *snakeLength);
 }
 
-//game over ¾µ °÷ÀÌ ¸¹¾Æ¼­ ÇÔ¼ö·Î ¸¸µé¾ú½À´Ï´Ù  24.05.27
+//game over ì“¸ ê³³ì´ ë§ì•„ì„œ í•¨ìˆ˜ë¡œ ë§Œë“¤ì—ˆìŠµë‹ˆë‹¤  24.05.27
 void game_over(){
     system("cls");
     speed = 500;
@@ -242,11 +242,11 @@ int moveSnake(Snake *snake, int *length, Direction direction) {
     int headX = snake[0].x;
     int headY = snake[0].y;
 
-    // º® Ãæµ¹
+    // ë²½ ì¶©ëŒ
     if (snake[0].x == MAP_X || snake[0].x == (MAP_WIDTH + MAP_X) || snake[0].y == MAP_Y || snake[0].y == (MAP_HEIGHT + MAP_Y)) {
-        return 1;  //1¸¸ ¸®ÅÏÇØµµ gameover°¡ µÊ mainÇÔ¼ö¿¡¼­ ¹Ş¾ÆÁÜ
+        return 1;  //1ë§Œ ë¦¬í„´í•´ë„ gameoverê°€ ë¨ mainí•¨ìˆ˜ì—ì„œ ë°›ì•„ì¤Œ
     }
-    // ¸ÔÀÌ ¸Ô¾úÀ» ¶§
+    // ë¨¹ì´ ë¨¹ì—ˆì„ ë•Œ
     if (snake[0].x == food_x && snake[0].y == food_y) {
         player[player_i].score += 100;
         gotoxy(40, 17, "score: ");
@@ -254,7 +254,7 @@ int moveSnake(Snake *snake, int *length, Direction direction) {
         (*length)++;
         food(snake, *length);
         if(speed>0)
-            speed -= 10;            //¼Óµµ Áõ°¡ Ãß°¡ 24.05.27
+            speed -= 10;            //ì†ë„ ì¦ê°€ ì¶”ê°€ 24.05.27
         gotoxy(40, 19,"speed: ");
         printf("%d", -(speed-500));
     }
@@ -264,7 +264,7 @@ int moveSnake(Snake *snake, int *length, Direction direction) {
         gotoxy(preTailX, preTailY, " ");
     }
 
-    //ÀÚ±â¸ö°ú Ãæµ¹Çß´ÂÁö ¾Ë¾Æº¸±â
+    //ìê¸°ëª¸ê³¼ ì¶©ëŒí–ˆëŠ”ì§€ ì•Œì•„ë³´ê¸°
     for(int i=1; i< *length; i++){
         if(snake[0].x==snake[i].x && snake[0].y==snake[i].y){
             return 1;
@@ -293,19 +293,19 @@ int moveSnake(Snake *snake, int *length, Direction direction) {
             break;
     }
 
-    // ¸Ó¸®ÀÇ ÀÌÀü À§Ä¡¸¦ ¸öÅëÀ¸·Î Ç¥½Ã
-    gotoxy(snake[0].x, snake[0].y, "¤·");
+    // ë¨¸ë¦¬ì˜ ì´ì „ ìœ„ì¹˜ë¥¼ ëª¸í†µìœ¼ë¡œ í‘œì‹œ
+    gotoxy(snake[0].x, snake[0].y, "ã…‡");
 
-    // ¸Ó¸®ÀÇ »õ·Î¿î À§Ä¡ ±×¸®±â
-    gotoxy(headX, headY, "¤¾");
+    // ë¨¸ë¦¬ì˜ ìƒˆë¡œìš´ ìœ„ì¹˜ ê·¸ë¦¬ê¸°
+    gotoxy(headX, headY, "ã…");
     snake[0].x = headX;
     snake[0].y = headY;
 
     for (int i = 1; i <= *length - 1; i++) {
-        gotoxy(snake[i].x, snake[i].y, "¤·");
+        gotoxy(snake[i].x, snake[i].y, "ã…‡");
     }
 
-    Sleep(speed); // ÀÌµ¿ ÁÖ±â¸¦ ÁÙ¿©¼­ ´õ ºü¸£°Ô ¿òÁ÷ÀÌµµ·Ï ÇÔ
+    Sleep(speed); // ì´ë™ ì£¼ê¸°ë¥¼ ì¤„ì—¬ì„œ ë” ë¹ ë¥´ê²Œ ì›€ì§ì´ë„ë¡ í•¨
     return 0;
 }
 
@@ -356,7 +356,7 @@ void load_scores(){
     fclose(fp);
 }
 void save_scores(){
-    FILE *fp = fopen("score.txt", "a"); //w¿¡¼­ a·Î ¹Ù²ãº½
+    FILE *fp = fopen("score.txt", "a"); //wì—ì„œ aë¡œ ë°”ê¿”ë´„
     if(fp == NULL){
         printf("Error opening file!\n");
         return;
@@ -366,4 +366,4 @@ void save_scores(){
     }
     fclose(fp);
 }
-//ÁøÂ¥·Î ÇØ³¿.
+//ì§„ì§œë¡œ í•´ëƒ„.

@@ -1,0 +1,3 @@
+kim 200
+kim 200
+kenny 100
